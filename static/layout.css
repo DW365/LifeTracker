@@ -1,0 +1,33 @@
+.dropdown-menu {
+    background: #1b1b1b linear-gradient(to bottom, #222, #111);
+}
+#admin-navbar-collapse > div > a{
+        margin-top: 6px;
+    margin-bottom: 6px;
+}
+.dropdown-menu:after {
+    border-bottom: 6px solid #222!important;
+}
+.dropdown-menu>li>a{
+    color: #fff;
+}
+.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a{
+    background: #666666 linear-gradient(to bottom, #555555, #666666);
+}
+
+.dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus{
+    background: #666666 linear-gradient(to bottom, #555555, #666666);
+}
+
+.list-buttons-column{
+    text-align: right!important;
+}
+
+.modal-dialog{
+    width: 80%;
+    height: 80%;
+}
+
+.image-thumbnail img{
+        max-height: 200px;
+    }

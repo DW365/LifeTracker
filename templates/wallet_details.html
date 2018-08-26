@@ -1,0 +1,150 @@
+{% extends 'admin/model/details.html' %}
+
+{% block navlinks %}
+  <!--<ul class="nav nav-tabs">-->
+    <!--<li>-->
+        <!--<a href="{{ return_url }}">{{ _gettext('Назад') }}</a>-->
+    <!--</li>-->
+  <!--</ul>-->
+{% endblock %}
+
+
+{% block tail %}
+
+    <script src="{{ admin_static.url(filename='admin/js/details_filter.js', v='1.0.0') }}"></script>
+    <script src="{{ admin_static.url(filename='admin/js/bs3_modal.js', v='1.0.0') }}"></script>
+    <script>
+      // fill the header of modal dynamically
+      $('.modal-header h3').html('{% block header_text -%}
+        <h3 style="margin: 0px">{{ model.name }}</h3>
+      {%- endblock %}');
+    </script>
+
+
+{% endblock %}
+
+{% block details_search %}
+{% endblock %}
+
+
+{% block details_table %}
+    <!-- Styles -->
+<style>
+#chartdiv {
+	width	: 100%;
+	height	: 500px;
+}
+
+</style>
+
+<!-- Resources -->
+
+
+<!-- Chart code -->
+<script src="{{ url_for('static', filename='amcharts.js') }}"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+<script>
+    (function($) {
+var chart = AmCharts.makeChart("chartdiv", {
+    "type": "serial",
+    "theme": "light",
+    "marginRight": 40,
+    "marginLeft": 40,
+    "autoMarginOffset": 20,
+    "mouseWheelZoomEnabled":true,
+    "dataDateFormat": "YYYY-MM-DD",
+    "valueAxes": [{
+        "id": "v1",
+        "axisAlpha": 0,
+        "position": "left",
+        "ignoreAxisWidth":true
+    }],
+    "balloon": {
+        "borderThickness": 1,
+        "shadowAlpha": 0
+    },
+    "graphs": [{
+        "id": "g1",
+        "balloon":{
+          "drop":true,
+          "adjustBorderColor":false,
+          "color":"#ffffff"
+        },
+        "bullet": "round",
+        "bulletBorderAlpha": 1,
+        "bulletColor": "#FFFFFF",
+        "bulletSize": 5,
+        "hideBulletsCount": 50,
+        "lineThickness": 2,
+        "title": "red line",
+        "useLineColorForBulletBorder": true,
+        "valueField": "value",
+        "balloonText": ""
+    }],
+    "chartScrollbar": {
+        "graph": "g1",
+        "oppositeAxis":false,
+        "offset":30,
+        "scrollbarHeight": 80,
+        "backgroundAlpha": 0,
+        "selectedBackgroundAlpha": 0.1,
+        "selectedBackgroundColor": "#888888",
+        "graphFillAlpha": 0,
+        "graphLineAlpha": 0.5,
+        "selectedGraphFillAlpha": 0,
+        "selectedGraphLineAlpha": 1,
+        "autoGridCount":true,
+        "color":"#AAAAAA"
+    },
+    "chartCursor": {
+        "pan": true,
+        "valueLineEnabled": true,
+        "valueLineBalloonEnabled": true,
+        "categoryBalloonEnabled": false,
+        "bulletsEnabled": false,
+        "cursorAlpha":1,
+        "cursorColor":"#258cbb",
+        "limitToGraph":"g1",
+        "valueLineAlpha":0.5,
+        "valueZoomable":false
+    },
+    "valueScrollbar":{
+      "oppositeAxis":false,
+      "offset":50,
+      "scrollbarHeight":10
+    },
+    "categoryField": "date",
+    "categoryAxis": {
+        "parseDates": true,
+        "dashLength": 1,
+        "minorGridEnabled": true
+    },
+    "export": {
+        "enabled": false
+    },
+    "dataProvider": [
+        {% set dates = model.dates_balance %}
+        {% for date in dates %}
+            {
+                "date": "{{date}}",
+                "value": {{dates[date]}}
+            },
+        {% endfor %}]
+});
+
+chart.addListener("rendered", zoomChart);
+
+zoomChart();
+
+function zoomChart() {
+    chart.zoomToIndexes(chart.dataProvider.length - 40, chart.dataProvider.length - 1);
+}
+}(window.jQuery));
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>
+{% endblock %}

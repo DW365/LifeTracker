@@ -1,0 +1,51 @@
+{% extends 'admin/model/modals/details.html' %}
+
+{% block tail %}
+
+
+
+<link rel="stylesheet" type="text/css" href="http://www.bootstrap-year-calendar.com/css/bootstrap-year-calendar.min.css">
+    <link rel="stylesheet" type="text/css" href="http://bootstrap-year-calendar.com/css/style.css">
+    <link rel="stylesheet" type="text/css" href="http://bootstrap-year-calendar.com/css/bootstrap-datepicker.min.css">
+
+    <script src="{{ admin_static.url(filename='admin/js/details_filter.js', v='1.0.0') }}"></script>
+    <script src="{{ admin_static.url(filename='admin/js/bs3_modal.js', v='1.0.0') }}"></script>
+<script>
+  // fill the header of modal dynamically
+  $('.modal-header h3').html('{% block header_text -%}
+    <h3 style="margin: 0px">{{ model.description }}</h3>
+  {%- endblock %}');
+  </script>
+
+
+{% endblock %}
+
+{% block details_search %}
+{% endblock %}
+
+
+{% block details_table %}
+    <div data-provide="calendar" id="calendar" style="padding-bottom: 20px"></div>
+    <script src="/admin/static/vendor/jquery.min.js?v=2.1.4" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='bootstrap-year-calendar.js') }}"></script>
+    <script>
+        $(function() {
+    var dates = [];
+    // var circleDateTime = new Date(currentYear, 1, 20).getTime();
+    {% for date in model.completed_on %}
+        dates.push(new Date({{date.year}}, {{date.month-1}}, {{date.day}}).getTime());
+    {% endfor %}
+
+    console.log(dates);
+    $('#calendar').calendar({
+        customDayRenderer: function(element, date) {
+            if(dates.includes(date.getTime())) {
+                $(element).css('background-color', 'green');
+                $(element).css('color', 'white');
+                $(element).css('border-radius', '15px');
+            }
+        }
+    });
+});
+    </script>
+{% endblock %}
