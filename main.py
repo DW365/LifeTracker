@@ -10,6 +10,7 @@ from models.finances.operations.outcoming import OutomingOperationView, Outcomin
 from models.finances.wallet import WalletView, Wallet
 from models.library.book import Book, BookView, ReadedBookView
 from models.library.film import FilmView, Film, WatchedFilmView
+from models.library.place import Place, VisitedPlaceView, PlaceView
 from models.tasks.everyday_task import EveryDayTask, EveryDayTaskView
 from models.tasks.hanging_task import HangingTask, HangingTaskView
 from models.tasks.task import TaskView, Task, ArchiveTasksView, TodayTasksView, ActiveTasksView
@@ -78,6 +79,9 @@ def add_lib_menu(a, cat="Библиотека"):
     add_divider(a, cat)
     admin.add_view(FilmView(Film, name="Фильмы", endpoint="films", category=cat))
     admin.add_view(WatchedFilmView(Film, name="Просмотренные фильмы", endpoint="watched_films", category=cat))
+    add_divider(a, cat)
+    admin.add_view(PlaceView(Place, name="Места", endpoint="places", category=cat))
+    admin.add_view(VisitedPlaceView(Place, name="Посещенные места", endpoint="visited_places", category=cat))
 
 
 if __name__ == '__main__':
@@ -87,4 +91,4 @@ if __name__ == '__main__':
     add_lib_menu(admin)
     add_settings_menu(admin)
 
-    app.run(host="127.0.0.1", debug=True, use_reloader=True)
+    app.run(host="192.168.0.102", debug=True, use_reloader=True)

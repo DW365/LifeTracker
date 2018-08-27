@@ -31,3 +31,9 @@
 .image-thumbnail img{
         max-height: 200px;
     }
+
+
+.image-thumbnail.big img{
+        max-height: 250px;
+        max-width: 400px;
+    }

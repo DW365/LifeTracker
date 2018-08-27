@@ -1,6 +1,6 @@
 from flask_admin.contrib.mongoengine import ModelView
 from mongoengine import *
-from models.formatters import bold_date, icon
+from models.formatters import bold_date, icon, address
 
 
 class BaseLib(Document):
@@ -17,7 +17,7 @@ class BaseLibView(ModelView):
     action_disallowed_list = 'delete'
     list_template = 'list.html'
     column_labels = dict(description='Описание', date="Дата", price="Сумма", wallet='Кошелек',
-                         category="Жанр", icon="", name="Название", review="Комментарий")
+                         category="Жанр", icon="", name="Название", review="Комментарий", address="Адрес")
     column_formatters = dict(icon=icon, date=bold_date)
     create_modal = True
     can_create = True
