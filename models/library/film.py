@@ -1,8 +1,6 @@
 from mongoengine import ReferenceField
-
+from models.category import FilmCategory
 from models.library.base_lib import BaseLib, BaseLibView
-from models.library.book_category import BookCategory
-from models.library.film_category import FilmCategory
 
 
 class Film(BaseLib):

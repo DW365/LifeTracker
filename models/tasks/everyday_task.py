@@ -1,14 +1,12 @@
 from datetime import datetime
-
-from flask import request, redirect, url_for
+from flask import request, redirect
 from flask_admin import expose
 from flask_admin.helpers import get_redirect_target
 from flask_admin.model.helpers import get_mdict_item_or_list
-from markupsafe import Markup
 from mongoengine import *
 from flask_admin.contrib.mongoengine import ModelView
-
-from models.tasks.task_category import TaskCategory
+from models.category import TaskCategory
+from models.formatters import modify_status
 
 
 class EveryDayTask(Document):
@@ -24,18 +22,6 @@ class EveryDayTask(Document):
             return self.completed_on[-1].day == datetime.today().day
         else:
             return False
-
-
-def modify_status(view, context, model, name):
-    if model.is_completed_today:
-        return Markup(
-            u'<a href="%s" class="btn btn-block btn-success"><span class="glyphicon glyphicon-ok"></span> Сделано</a>') % (
-                url_for('everyday_tasks.complete', id=model.id))
-    else:
-        return Markup(
-            u'<a href="%s" class="btn btn-block btn-danger"><span class="glyphicon glyphicon-remove"></span> Не сделано</a>' % (
-                url_for('everyday_tasks.complete', id=model.id))
-        )
 
 
 class EveryDayTaskView(ModelView):

@@ -1,7 +1,7 @@
 from mongoengine import ReferenceField
 
+from models.category import BookCategory
 from models.library.base_lib import BaseLib, BaseLibView
-from models.library.book_category import BookCategory
 
 
 class Book(BaseLib):

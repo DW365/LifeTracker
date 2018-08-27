@@ -8,7 +8,8 @@ from markupsafe import Markup
 from mongoengine import *
 from flask_admin.contrib.mongoengine import ModelView
 from mongoengine.queryset.visitor import Q
-from models.tasks.task_category import TaskCategory
+
+from models.category import TaskCategory
 
 
 class Task(Document):
@@ -114,7 +115,3 @@ class ArchiveTasksView(TaskView):
 
     def get_query(self):
         return self.model.objects(Q(archived=True) | Q(is_completed=True))
-        # return self.model.objects(
-        #     Q(archived=True) |
-        #     Q(date__lte=(datetime.now()).replace(hour=0, minute=0, second=0), is_completed=True) |
-        #     Q(date__lte=(datetime.now() + timedelta(days=1)).replace(hour=0, minute=0, second=0), is_completed=True, end_date__ne=None))

@@ -8,7 +8,7 @@ from markupsafe import Markup
 from mongoengine import *
 from flask_admin.contrib.mongoengine import ModelView
 
-from models.tasks.task_category import TaskCategory
+from models.category import TaskCategory
 
 
 class HangingTask(Document):

@@ -1,14 +1,8 @@
 from datetime import datetime
-
-from flask import flash, request
-from flask_admin import expose
-from flask_admin.babel import gettext
-from flask_admin.contrib.mongoengine import ModelView, form
-from flask_admin.form import FormOpts
-from flask_admin.helpers import get_redirect_target
-from markupsafe import Markup
+from flask import request
+from flask_admin.contrib.mongoengine import ModelView
 from mongoengine import *
-from werkzeug.utils import redirect
+from models.formatters import bold_date
 
 
 class BaseOperation(Document):
@@ -17,12 +11,6 @@ class BaseOperation(Document):
     date = DateTimeField(required=True, default=datetime.now())
     wallet = ReferenceField("Wallet")
     meta = {'allow_inheritance': True}
-
-
-def bold_date(view, context, model, name):
-    return Markup(
-            f'<b>{model.date.strftime("%d.%m.%y")}</b>'
-        )
 
 
 class BaseOperationView(ModelView):
@@ -37,7 +25,6 @@ class BaseOperationView(ModelView):
 
     def create_form(self, obj=None):
         form = super(BaseOperationView, self).create_form()
-        # raise Exception
         if 'wallet' in request.args:
             from models.finances.wallet import Wallet
             form.wallet.data = Wallet.objects(id=request.args['wallet']).first()
