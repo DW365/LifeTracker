@@ -43,7 +43,7 @@ def actions(view, context, model, name):
 
 
 def modify_status(view, context, model, name):
-    if (hasattr(model,'is_completed_period') and model.is_completed_period) or model.is_completed:
+    if (hasattr(model, 'is_completed_period') and model.is_completed_period) or model.is_completed:
         return Markup(
             u'<a href="%s" class="btn btn-block btn-success">'
             u'<span class="glyphicon glyphicon-ok">'
@@ -53,3 +53,14 @@ def modify_status(view, context, model, name):
             u'<a href="%s" class="btn btn-block btn-danger">'
             u'<span class="glyphicon glyphicon-remove">'
             u'</span> Не сделано</a>' % (url_for('.complete', id=model.id)))
+
+
+def mark_list(view, context, model, name):
+    text = getattr(model, name)
+    lines = text.split("\r\n")
+    lines = map(lambda x: f"<li>{x}</li>", lines)
+    return Markup(f"<ul>{''.join(lines)}</ul>")
+
+
+def stars(view, context, model, name):
+    return Markup('<span class="glyphicon glyphicon-star"></span>'*model.mark)

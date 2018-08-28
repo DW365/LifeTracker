@@ -4,7 +4,6 @@ from flask import request
 from flask_admin import expose
 from flask_admin.helpers import get_redirect_target
 from flask_admin.model.helpers import get_mdict_item_or_list
-from markupsafe import Markup
 from mongoengine import *
 from werkzeug.utils import redirect
 
@@ -47,19 +46,3 @@ class BaseTaskView(BaseView):
         return redirect(return_url)
 
 
-class HangingTask(BaseTask):
-    started_at = DateTimeField(required=False)
-
-    @property
-    def date(self):
-        if self.started_at:
-            return Markup(f"От <b>{self.started_at.strftime('%d.%m.%y')}</b>")
-        else:
-            return ""
-
-
-class HangingTaskView(BaseTaskView):
-    column_list = ["description", "date"]
-
-    def is_visible(self):
-        return True

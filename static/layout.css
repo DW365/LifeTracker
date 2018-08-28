@@ -2,8 +2,8 @@
     background: #1b1b1b linear-gradient(to bottom, #222, #111);
 }
 #admin-navbar-collapse > div > a{
-        margin-top: 6px;
-    margin-bottom: 6px;
+        margin-top: 8px;
+    margin-bottom: 8px;
 }
 .dropdown-menu:after {
     border-bottom: 6px solid #222!important;

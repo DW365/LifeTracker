@@ -7,7 +7,7 @@
         {%- if admin_view.create_modal -%}
         <a href="{{get_url('.create_view', url=return_url, modal=True)}}" data-target="#fa_modal_window" class="btn btn-primary pull-right" data-toggle="modal">{{ _gettext('Создать') }}</a>
           {% else %}
-        <a href="{{ url_for('.create_view', url=return_url) }}" class="btn btn-primary pull-right">{{ _gettext('Создать') }}</a>
+        <a href="{{ url_for('.create_view', url=return_url) }}" class="btn btn-success pull-right">{{ _gettext('Создать') }}</a>
         {%- endif -%}
     </div>
     {% endif %}

@@ -1,5 +1,6 @@
 import flask_admin as admin
 from flask import Flask, request, session
+from flask_admin.contrib.mongoengine import ModelView
 from flask_admin.menu import MenuLink
 from flask_babelex import Babel
 from flask_mongoengine import MongoEngine
@@ -12,8 +13,10 @@ from models.finances.wallet import WalletView, Wallet
 from models.library.book import Book, BookView, ReadedBookView
 from models.library.film import FilmView, Film, WatchedFilmView
 from models.library.place import Place, VisitedPlaceView, PlaceView
-from models.tasks.base_task import HangingTaskView, HangingTask, BaseTask, BaseTaskView
-from models.tasks.repeated.repeated_task import EverydayTask, EveryWeekTask, RepeatedTaskView
+from models.logs import DayLog, DayLogView
+from models.tasks.base_task import BaseTask, BaseTaskView
+from models.tasks.hanging_task import HangingTask, HangingTaskView
+from models.tasks.repeated_task import EverydayTask, EveryWeekTask, RepeatedTaskView
 from models.tasks.simple_task.models import OneTimeTask, ContinuousTask, CategoryTask
 from models.tasks.simple_task.views import OneTimeTaskView, ContinuousTaskView, TodayTaskView, \
     ActiveTaskView, ArchiveTaskView
@@ -93,11 +96,18 @@ def add_lib_menu(a, cat="Библиотека"):
     admin.add_view(VisitedPlaceView(Place, name="Посещенные места", endpoint="visited_places", category=cat))
 
 
+def add_logs_menu(a, cat="Логи"):
+    admin.add_view(DayLogView(DayLog, name="За день", endpoint="daily", category=cat))
+    admin.add_view(ModelView(Book, name="За неделю", endpoint="weekly", category=cat))
+    admin.add_view(ModelView(Film, name="За месяц", endpoint="monthly", category=cat))
+
+
 if __name__ == '__main__':
     admin = admin.Admin(app, 'LIFE', base_template='layout.html', template_mode='bootstrap3')
     add_tasks_menu(admin)
     add_finances_menu(admin)
     add_lib_menu(admin)
+    add_logs_menu(admin)
     add_settings_menu(admin)
 
     app.run(host="192.168.0.102", debug=True, use_reloader=True)
