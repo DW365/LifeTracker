@@ -1,8 +1,9 @@
-from flask import Flask, request, session
 import flask_admin as admin
+from flask import Flask, request, session
 from flask_admin.menu import MenuLink
-from flask_mongoengine import MongoEngine
 from flask_babelex import Babel
+from flask_mongoengine import MongoEngine
+
 from config import HOST, PORT, USERNAME, PASSWORD, DB_NAME
 from models.category import CategoryView, FilmCategory, BookCategory, OutcomingCategory, IncomingCategory, TaskCategory
 from models.finances.operations.incoming import IncomingOperation, IncomingOperationView
@@ -12,11 +13,10 @@ from models.library.book import Book, BookView, ReadedBookView
 from models.library.film import FilmView, Film, WatchedFilmView
 from models.library.place import Place, VisitedPlaceView, PlaceView
 from models.tasks.base_task import HangingTaskView, HangingTask, BaseTask, BaseTaskView
-from models.tasks.repeated.repeated_task import EverydayTask, EveryWeekTask, EveryMonthTask, RepeatedTaskView
+from models.tasks.repeated.repeated_task import EverydayTask, EveryWeekTask, RepeatedTaskView
 from models.tasks.simple_task.models import OneTimeTask, ContinuousTask, CategoryTask
-from models.tasks.simple_task.views import SimpleTaskView, OneTimeTaskView, ContinuousTaskView, TodayTaskView, \
+from models.tasks.simple_task.views import OneTimeTaskView, ContinuousTaskView, TodayTaskView, \
     ActiveTaskView, ArchiveTaskView
-
 
 app = Flask(__name__)
 
