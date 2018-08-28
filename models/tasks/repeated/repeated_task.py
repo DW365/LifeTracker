@@ -1,46 +1,53 @@
 from datetime import datetime
+
 from flask import request, redirect
 from flask_admin import expose
 from flask_admin.helpers import get_redirect_target
 from flask_admin.model.helpers import get_mdict_item_or_list
-from mongoengine import *
-from flask_admin.contrib.mongoengine import ModelView
-from models.category import TaskCategory
+from mongoengine import ListField, DateTimeField, IntField
+
 from models.formatters import modify_status
+from models.tasks.base_task import BaseTask, BaseTaskView
 
 
-class EveryDayTask(Document):
-    description = StringField(required=True)
+class RepeatedTask(BaseTask):
     completed_on = ListField(DateTimeField(default=datetime.now(), required=True))
-    active = BooleanField(default=True)
-    categories = ListField(ReferenceField(TaskCategory))
     order = IntField()
+    period = None
 
     @property
-    def is_completed_today(self):
+    def is_completed_period(self):
         if self.completed_on:
-            return self.completed_on[-1].day == datetime.today().day
+            return self.completed_on[-1].day >= datetime.now().day - self.period + 1
         else:
             return False
 
 
-class EveryDayTaskView(ModelView):
-    list_template = 'list.html'
+class EverydayTask(RepeatedTask):
+    period = 1
+
+
+class EveryWeekTask(RepeatedTask):
+    period = 7
+
+
+class EveryMonthTask(RepeatedTask):
+    period = 30
+
+
+class RepeatedTaskView(BaseTaskView):
     details_modal_template = 'everyday_task_details.html'
-    action_disallowed_list = 'delete'
-    column_list = ["description", "is_completed_today"]
-    column_formatters = dict(is_completed_today=modify_status)
+    column_exclude_list = ['archive', 'order', '_cls', 'is_completed']
+    form_excluded_columns = ['is_completed']
+    column_formatters = dict(completed_on=modify_status)
     column_sortable_list = []
-    column_labels = dict(description='Задача', categories ="Категория", is_completed_today='Статус')
     can_view_details = True
-    edit_modal = True
-    details_modal = True
 
     def is_visible(self):
-            return True
+        return True
 
     def get_query(self):
-        return self.model.objects(active=True).order_by("order")
+        return self.model.objects(archive__ne=True).order_by("order")
 
     @expose('/complete/', methods=('POST', 'GET'))
     def complete(self):
@@ -53,6 +60,6 @@ class EveryDayTaskView(ModelView):
             model.completed_on.append(datetime.now())
             model.save()
         elif model.completed_on:
-                del model.completed_on[-1]
-                model.save()
+            del model.completed_on[-1]
+            model.save()
         return redirect(return_url)

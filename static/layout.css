@@ -37,3 +37,7 @@
         max-height: 250px;
         max-width: 400px;
     }
+
+#admin-navbar-collapse > div > a:nth-child(2){
+    margin-right: 5px;
+}

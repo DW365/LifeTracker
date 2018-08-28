@@ -11,9 +11,12 @@ from models.finances.wallet import WalletView, Wallet
 from models.library.book import Book, BookView, ReadedBookView
 from models.library.film import FilmView, Film, WatchedFilmView
 from models.library.place import Place, VisitedPlaceView, PlaceView
-from models.tasks.everyday_task import EveryDayTask, EveryDayTaskView
-from models.tasks.hanging_task import HangingTask, HangingTaskView
-from models.tasks.task import TaskView, Task, ArchiveTasksView, TodayTasksView, ActiveTasksView
+from models.tasks.base_task import HangingTaskView, HangingTask, BaseTask, BaseTaskView
+from models.tasks.repeated.repeated_task import EverydayTask, EveryWeekTask, EveryMonthTask, RepeatedTaskView
+from models.tasks.simple_task.models import OneTimeTask, ContinuousTask, CategoryTask
+from models.tasks.simple_task.views import SimpleTaskView, OneTimeTaskView, ContinuousTaskView, TodayTaskView, \
+    ActiveTaskView, ArchiveTaskView
+
 
 app = Flask(__name__)
 
@@ -46,14 +49,20 @@ def add_divider(a, cat):
 
 
 def add_tasks_menu(a, cat="Дела"):
-    a.add_view(TodayTasksView(Task, name="На сегодня", endpoint="today_tasks", category=cat))
-    a.add_view(ActiveTasksView(Task, name="Активные", endpoint="active_tasks", category=cat))
-    a.add_view(ArchiveTasksView(Task, name="Архив", endpoint="archive_tasks", category=cat))
+    a.add_view(ContinuousTaskView(ContinuousTask))
+    a.add_view(OneTimeTaskView(OneTimeTask))
+
+    a.add_view(TodayTaskView(CategoryTask, name="На сегодня", endpoint="today_tasks", category=cat))
+    a.add_view(TodayTaskView(CategoryTask, name="На неделю", endpoint="week_tasks", category=cat))
+    a.add_view(ActiveTaskView(CategoryTask, name="Предстоящие", endpoint="active_tasks", category=cat))
+    a.add_view(ArchiveTaskView(CategoryTask, name="Архив", endpoint="archive_tasks", category=cat))
     add_divider(a, cat)
-    a.add_view(EveryDayTaskView(EveryDayTask, name="Ежедневные", endpoint="everyday_tasks", category=cat))
+    a.add_view(RepeatedTaskView(EverydayTask, name="Ежедневные", endpoint="everyday_tasks", category=cat))
+    a.add_view(RepeatedTaskView(EveryWeekTask, name="Еженедельные", endpoint="everyweek_tasks", category=cat))
+    # a.add_view(RepeatedTaskView(EveryMonthTask, name="Ежемесячные", endpoint="everymonth_tasks", category=cat))
     add_divider(a, cat)
     a.add_view(HangingTaskView(HangingTask, name="Подвешенные", endpoint="hanging_tasks", category=cat))
-    a.add_view(TaskView(Task, name="Все дела", endpoint="tasks"))
+    a.add_view(BaseTaskView(BaseTask, name="Все дела", endpoint="tasks"))
 
 
 def add_finances_menu(a, cat="Финансы"):

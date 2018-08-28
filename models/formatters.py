@@ -43,12 +43,13 @@ def actions(view, context, model, name):
 
 
 def modify_status(view, context, model, name):
-    if model.is_completed_today:
+    if (hasattr(model,'is_completed_period') and model.is_completed_period) or model.is_completed:
         return Markup(
-            u'<a href="%s" class="btn btn-block btn-success"><span class="glyphicon glyphicon-ok"></span> Сделано</a>') % (
-                   url_for('everyday_tasks.complete', id=model.id))
+            u'<a href="%s" class="btn btn-block btn-success">'
+            u'<span class="glyphicon glyphicon-ok">'
+            u'</span> Сделано</a>') % (url_for('.complete', id=model.id))
     else:
         return Markup(
-            u'<a href="%s" class="btn btn-block btn-danger"><span class="glyphicon glyphicon-remove"></span> Не сделано</a>' % (
-                url_for('everyday_tasks.complete', id=model.id))
-        )
+            u'<a href="%s" class="btn btn-block btn-danger">'
+            u'<span class="glyphicon glyphicon-remove">'
+            u'</span> Не сделано</a>' % (url_for('.complete', id=model.id)))

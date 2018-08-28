@@ -10,6 +10,7 @@ from flask_admin.contrib.mongoengine import ModelView
 from mongoengine.queryset.visitor import Q
 
 from models.category import TaskCategory
+from models.formatters import modify_status
 
 
 class Task(Document):
@@ -19,18 +20,6 @@ class Task(Document):
     is_completed = BooleanField(default=False)
     categories = ListField(ReferenceField(TaskCategory))
     archived = BooleanField(default=False)
-
-
-def modify_status(view, context, model, name):
-    if model.is_completed:
-        return Markup(
-            u'<a href="%s" class="btn btn-block btn-success"><span class="glyphicon glyphicon-ok"></span> Сделано</a>') % (
-                   url_for('tasks.complete', id=model.id, view=view.get_url('.index_view')))
-    else:
-        return Markup(
-            u'<a href="%s" class="btn btn-block btn-danger"><span class="glyphicon glyphicon-remove"></span> Не сделано</a>' % (
-                url_for('tasks.complete', id=model.id, view=view.get_url('.index_view')))
-        )
 
 
 def bold_date(view, context, model, name):

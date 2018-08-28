@@ -1,0 +1,26 @@
+{% extends 'list.html' %}
+
+{% block menu_links %}
+    {% if admin_view.can_create %}
+    <div class="btn-menu">
+        {%- if admin_view.create_modal -%}
+            <a href="{{get_url('onetimetask.create_view', url=return_url, modal=True)}}" data-target="#fa_modal_window" class="btn btn-primary pull-right btn-success" data-toggle="modal">{{ _gettext('Создать') }}</a>
+            <a href="{{get_url('continuoustask.create_view', url=return_url, modal=True)}}" data-target="#fa_modal_window" class="btn btn-primary pull-right btn-success" data-toggle="modal">{{ _gettext('Создать длительную') }}</a>
+        {% else %}
+        <a href="{{ url_for('.create_view', url=return_url) }}" class="btn btn-primary pull-right">{{ _gettext('Создать') }}</a>
+        {%- endif -%}
+    </div>
+    {% endif %}
+
+    {% if filter_groups %}
+    <div class="btn-group btn-menu">
+        {{ model_layout.filter_options(btn_class='btn dropdown-toggle btn-title') }}
+    </div>
+    {% endif %}
+
+    {% if search_supported %}
+    <div class="search-form btn-menu">
+        {{ model_layout.search_form(input_class='span2 btn-title') }}
+    </div>
+    {% endif %}
+{% endblock %}

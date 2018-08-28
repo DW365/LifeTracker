@@ -1,5 +1,7 @@
 from flask_admin.contrib.mongoengine import ModelView
 from mongoengine import *
+
+from models.base_view import BaseView
 from models.formatters import bold_date, icon, address
 
 
@@ -13,9 +15,7 @@ class BaseLib(Document):
     meta = {'allow_inheritance': True}
 
 
-class BaseLibView(ModelView):
-    action_disallowed_list = 'delete'
-    list_template = 'list.html'
+class BaseLibView(BaseView):
     column_labels = dict(description='Описание', date="Дата", price="Сумма", wallet='Кошелек',
                          category="Жанр", icon="", name="Название", review="Комментарий", address="Адрес")
     column_formatters = dict(icon=icon, date=bold_date)

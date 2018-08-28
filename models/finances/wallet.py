@@ -1,6 +1,7 @@
 from flask_admin.contrib.mongoengine import ModelView
 from mongoengine import *
 
+from models.base_view import BaseView
 from models.finances.operations.base_operation import BaseOperation
 from models.formatters import icon, actions
 from models.finances.operations.incoming import IncomingOperation
@@ -25,7 +26,6 @@ class Wallet(Document):
     def dates_balance(self):
         dates = {}
         last_value = 0
-        # raise Exception()
         for o in BaseOperation.objects(wallet=self).order_by("date"):
             date = o.date.strftime("%Y-%m-%d")
             last_value += o.price if isinstance(o, IncomingOperation) else -o.price
@@ -36,10 +36,8 @@ class Wallet(Document):
         return dates
 
 
-class WalletView(ModelView):
-    list_template = 'list.html'
+class WalletView(BaseView):
     column_list = ["icon", "name", "requisites", "balance", "actions"]
-    action_disallowed_list = 'delete'
     column_labels = dict(name='Название', icon="", requisites="Реквизиты", balance="Баланс", actions="Действия")
     column_formatters = dict(icon=icon, balance=lambda v, c, m, p: f"{m.balance} {m.currency}", actions=actions)
     edit_modal = True
