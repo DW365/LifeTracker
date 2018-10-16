@@ -40,3 +40,4 @@ class DayLogView(BaseView):
         hours6=dict(label='С 18:00 до 21:00'),
         hours7=dict(label='С 21:00 до 00:00'),
     )
+    column_default_sort = '-date'

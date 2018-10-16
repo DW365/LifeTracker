@@ -35,3 +35,4 @@ class CategoryView(ModelView):
     list_template = 'list.html'
     action_disallowed_list = 'delete'
     column_labels = dict(name='Название')
+    column_exclude_list = ["_cls"]

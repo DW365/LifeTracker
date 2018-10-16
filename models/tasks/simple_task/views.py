@@ -53,8 +53,8 @@ class TodayTaskView(SimpleTaskView):
                                      complete_before__lte=tomorrow()) |
                                    Q(_cls="BaseTask.CategoryTask.ContinuousTask",
                                      start_date__lte=tomorrow(),
-                                     end_date__gte=today())) & (
-                                      Q(archive__ne=True, is_completed=False))) \
+                                     end_date__gte=today())) &
+                                      Q(archive__ne=True) & (Q(is_completed=False) | Q(complete_day__gte=today()))) \
             .order_by('-_cls', 'complete_before', 'end_date')
 
 

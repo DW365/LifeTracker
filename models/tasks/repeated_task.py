@@ -36,10 +36,11 @@ class EveryMonthTask(RepeatedTask):
 
 
 class RepeatedTaskView(BaseTaskView):
-    details_modal_template = 'everyday_task_details.html'
     column_exclude_list = ['archive', 'order', '_cls', 'is_completed']
     form_excluded_columns = ['is_completed']
     column_formatters = dict(completed_on=modify_status)
+    details_modal = True
+    details_modal_template = "everyday_task_details.html"
     column_sortable_list = []
     can_view_details = True
 

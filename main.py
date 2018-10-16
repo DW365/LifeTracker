@@ -1,10 +1,13 @@
 import flask_admin as admin
-from flask import Flask, request, session
+from flask import Flask, request, session, render_template, redirect
 from flask_admin.contrib.mongoengine import ModelView
 from flask_admin.menu import MenuLink
 from flask_babelex import Babel
+from flask_login import LoginManager
 from flask_mongoengine import MongoEngine
 
+import flask_admin as admin
+import flask_login as login
 from config import HOST, PORT, USERNAME, PASSWORD, DB_NAME
 from models.category import CategoryView, FilmCategory, BookCategory, OutcomingCategory, IncomingCategory, TaskCategory
 from models.finances.operations.incoming import IncomingOperation, IncomingOperationView
@@ -19,7 +22,8 @@ from models.tasks.hanging_task import HangingTask, HangingTaskView
 from models.tasks.repeated_task import EverydayTask, EveryWeekTask, RepeatedTaskView
 from models.tasks.simple_task.models import OneTimeTask, ContinuousTask, CategoryTask
 from models.tasks.simple_task.views import OneTimeTaskView, ContinuousTaskView, TodayTaskView, \
-    ActiveTaskView, ArchiveTaskView
+    ActiveTaskView, ArchiveTaskView, WeekTaskView
+from models.panel_user import *
 
 app = Flask(__name__)
 
@@ -29,6 +33,9 @@ app.config['MONGODB_SETTINGS'] = {'db': DB_NAME,
                                   'port': PORT,
                                   'username': USERNAME,
                                   'password': PASSWORD}
+
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 babel = Babel(app)
 
@@ -56,7 +63,7 @@ def add_tasks_menu(a, cat="Дела"):
     a.add_view(OneTimeTaskView(OneTimeTask))
 
     a.add_view(TodayTaskView(CategoryTask, name="На сегодня", endpoint="today_tasks", category=cat))
-    a.add_view(TodayTaskView(CategoryTask, name="На неделю", endpoint="week_tasks", category=cat))
+    a.add_view(WeekTaskView(CategoryTask, name="На неделю", endpoint="week_tasks", category=cat))
     a.add_view(ActiveTaskView(CategoryTask, name="Предстоящие", endpoint="active_tasks", category=cat))
     a.add_view(ArchiveTaskView(CategoryTask, name="Архив", endpoint="archive_tasks", category=cat))
     add_divider(a, cat)
@@ -102,12 +109,38 @@ def add_logs_menu(a, cat="Логи"):
     admin.add_view(ModelView(Film, name="За месяц", endpoint="monthly", category=cat))
 
 
+@app.route('/', methods=('GET', 'POST'))
+def login_view():
+    if request.method == 'POST':
+        if not PanelUser.objects().first():
+            PanelUser(login="admin", password="xk2987cdf").save()
+        user = PanelUser.objects(login=request.form['login']).first()
+        if user and user.password == request.form['password']:
+            login.login_user(user)
+            return redirect('/admin')
+        else:
+            return redirect("/")
+
+    return render_template('form.html')
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return PanelUser.objects(id=user_id).first()
+
+
 if __name__ == '__main__':
-    admin = admin.Admin(app, 'LIFE', base_template='layout.html', template_mode='bootstrap3')
+    admin = admin.Admin(app, 'LIFE', base_template='layout.html', template_mode='bootstrap3',
+                        index_view=IndexView(name=''))
     add_tasks_menu(admin)
     add_finances_menu(admin)
     add_lib_menu(admin)
     add_logs_menu(admin)
     add_settings_menu(admin)
 
-    app.run(host="192.168.0.102", debug=True, use_reloader=True)
+    # admin.add_link(MenuLink(name='Мониторинг',
+    #                         url='https://cloud.mongodb.com/freemonitoring/cluster/O5NUV2ZFXFRRNR45CTGEJJDIGSMF4K7J'))
+    admin.add_link(MenuLink(name='Jupyter',
+                            url='http://37.230.115.227:8888/'))
+
+    app.run(host="0.0.0.0", debug=True, use_reloader=True, port=80)
