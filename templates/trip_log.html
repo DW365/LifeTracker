@@ -1,0 +1,74 @@
+{% extends 'admin/master.html' %}
+{% block head %}
+
+    <link rel="stylesheet" type="text/css" href="http://www.bootstrap-year-calendar.com/css/bootstrap-year-calendar.min.css">
+    <link rel="stylesheet" type="text/css" href="http://bootstrap-year-calendar.com/css/style.css">
+    <link rel="stylesheet" type="text/css" href="http://bootstrap-year-calendar.com/css/bootstrap-datepicker.min.css">
+
+{% endblock %}
+
+
+
+ {% block tail_js  %}
+{% endblock %}
+
+{% block body %}
+    <div data-provide="calendar" id="calendar" style="padding-bottom: 20px"></div>
+     <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="http:////cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+
+    <script src="{{ url_for('static', filename='bootstrap-year-calendar.js') }}"></script>
+    <script>
+        $(function() {
+    var dates = [];
+    // var circleDateTime = new Date(currentYear, 1, 20).getTime();
+    {% for date in dates %}
+        dates.push(new Date({{date.year}}, {{date.month-1}}, {{date.day}}).getTime());
+    {% endfor %}
+
+    console.log(dates);
+    $('#calendar').calendar({
+        enableContextMenu: true,
+        mouseOnDay: function(e) {
+            console.log(e);
+            if(e.events.length > 0) {
+                var content = '';
+
+                for(var i in e.events) {
+                    content += '<div class="event-tooltip-content">'
+                                    + '<div class="event-name" style="color:' + e.events[i].color + '">' + e.events[i].name + '</div>'
+                                    + '<div class="event-location">' + e.events[i].location + '</div>'
+                                + '</div>';
+                }
+
+                $(e.element).popover({
+                    trigger: 'manual',
+                    container: 'body',
+                    html:true,
+                    content: content
+                });
+
+                $(e.element).popover('show');
+            }
+        },
+        mouseOutDay: function(e) {
+            if(e.events.length > 0) {
+                $(e.element).popover('hide');
+            }
+        },
+        dataSource: [
+           {% for trip in trips %}
+            {
+                name: '{{trip.description}}',
+                    location: "",
+                color:"{{get_color(trip)}}",
+                startDate: new Date({{trip.date.year}}, {{trip.date.month-1}}, {{trip.date.day}}).getTime(),
+                endDate: new Date({{trip.date.year}}, {{trip.date.month-1}}, {{trip.date.day}}).getTime()
+            },
+            {% endfor %}
+        ]
+    });
+});
+    </script>
+{% endblock %}

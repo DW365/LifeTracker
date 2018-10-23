@@ -9,6 +9,7 @@ from flask_mongoengine import MongoEngine
 import flask_admin as admin
 import flask_login as login
 from config import HOST, PORT, USERNAME, PASSWORD, DB_NAME
+from models.Trip import TripView, Trip
 from models.category import CategoryView, FilmCategory, BookCategory, OutcomingCategory, IncomingCategory, TaskCategory
 from models.finances.operations.incoming import IncomingOperation, IncomingOperationView
 from models.finances.operations.outcoming import OutomingOperationView, OutcomingOperation
@@ -107,6 +108,9 @@ def add_logs_menu(a, cat="Логи"):
     admin.add_view(DayLogView(DayLog, name="За день", endpoint="daily", category=cat))
     admin.add_view(ModelView(Book, name="За неделю", endpoint="weekly", category=cat))
     admin.add_view(ModelView(Film, name="За месяц", endpoint="monthly", category=cat))
+    add_divider(a, cat)
+    a.add_view(TripView(Trip, name="Записи", endpoint="trips", category=cat))
+    admin.add_view(TripLogView(name="Дневник трезвости",category=cat))
 
 
 @app.route('/', methods=('GET', 'POST'))
@@ -122,6 +126,11 @@ def login_view():
             return redirect("/")
 
     return render_template('form.html')
+
+
+@app.route('/trip_log', methods=('GET', 'POST'))
+def trip_view():
+    return render_template('trip_log.html')
 
 
 @login_manager.user_loader
